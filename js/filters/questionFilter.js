@@ -13,15 +13,17 @@ todomvc.filter('questionFilter', function () {
     var sortedCount = 0;
 
     angular.forEach(input, function (todo) {
+	  // create list with the new questions
       if (todo.timestamp > new Date().getTime() - 180000) { // 3min
         todo.new = true;
         newQuestions.push(todo);
-      } else if (sortedCount++<=max){  // show top n only.
+	  // creates list for remaining questions
+      } else if (sortedCount++<=max){ 
         todo.new = false;
         sorted.push(todo);
       }
 
-      // sorting new questions based on the time if echo is the same.
+      // sort the list of new questions based on the time if echo is the same.
       // Newer ones are on the top
       newQuestions.sort(function(a, b) {
         if (a.echo == b.echo) {
@@ -31,7 +33,7 @@ todomvc.filter('questionFilter', function () {
       });
     });
 
-    // Combined list
+    // Combine the two lists
     return newQuestions.concat(sorted);
   };
 });

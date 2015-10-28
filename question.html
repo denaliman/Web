@@ -21,9 +21,33 @@
 	<!-- need this for comlted ones. TODO: can I do this in bootstrap -->
 	<link rel="stylesheet" href="main.css">
 
+	<!-- Custom fonts from Google Web Font -->
+	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700|Lobster|Merriweather+Sans:400,700italic' rel='stylesheet' type='text/css'>
+
 </head>
 <body ng-controller="TodoCtrl">
-	<font size="10">Questions for {{roomId}}?</font>&nbsp;
+
+	<style>
+		h1{
+			font-family: 'Merriweather Sans', sans-serif;
+			font-style: italic;
+			font-size: 50px;
+		}
+		small{
+			font-family: 'Merriweather Sans', sans-serif;
+			font-style: italic;
+		}
+		a{
+			font-family: 'Merriweather Sans', sans-serif;
+			font-style: italic;
+		}
+		button{
+			font-family: 'Merriweather Sans', sans-serif;
+			font-style: italic;
+		}
+	</style>
+	<h1 size="10">Questions for {{roomId}}?</h1>&nbsp;
 
 	<!--
 
@@ -48,6 +72,7 @@
 	<!--
 	<form id="todo-form" ng-submit="addTodo()">
 -->
+<!-- post a question -->
 <textarea type="text" id="new-todo" class="form-control"
 placeholder="Search or Post Question"
 ng-model="input.wholeMsg" autofocus></textarea>
@@ -58,25 +83,52 @@ ng-model="input.wholeMsg" autofocus></textarea>
 
 
 <div class="list-group" id="todo-list">
+	<!-- iterate questions -->
 	<span class="list-group-item" ng-repeat="todo in todos | filter:input | questionFilter:maxQuestion" ng-class="{completed: todo.completed, editing: todo == editedTodo}">
+		<!-- display questions -->
 		<h4 class="list-group-item-heading" ng-switch on="todo.headLastChar">
 			<span class="label label-danger" ng-show="todo.new">New</span>
 			<span class="badge">{{todo.echo}}</span>
-			<!-- switch -->
 			<span ng-switch-when="?" class="glyphicon glyphicon-question-sign"></span>
 			<span ng-switch-when="!" class="glyphicon glyphicon-ice-lolly"></span>
 			<span ng-class="{completed: todo.completed}">{{todo.head}}</span>
 		</h4>
-		<p class="list-group-item-text"><span ng-bind-html="todo.trustedDesc"></span> created: {{todo.dateString}}
-			<span ng-show="todo.tags">tags: {{todo.tags}}</span></p>
+		<h5 class="list-group-item-text"><span ng-bind-html="todo.trustedDesc"></span> </h5>
+		<small style="margin-top:5px; color:#848484"><em> created: {{todo.dateString}} <span ng-show="todo.tags">tags: {{todo.tags}}</span> replies: {{todo.replies}} </em></small>
 
+		<div>
 			<button class="btn btn-default btn-xs glyphicon glyphicon-hand-up" ng-click="upEcho(todo)" ng-disabled="$storage[todo.$id]">Like</button>
 			<button class="btn btn-default btn-xs glyphicon glyphicon-hand-down" ng-click="downEcho(todo)" ng-disabled="$storage[todo.$id]">Disike</button>
 			<button ng-show="isAdmin" class="btn btn-default btn-xs glyphicon glyphicon-check" ng-click="toggleCompleted(todo)">Toggle Completed</button>
 			&nbsp;
 			<button ng-show="isAdmin" class="btn btn-default btn-xs glyphicon glyphicon-trash" aria-hidden="true" ng-click="removeTodo(todo)">Del</button>
-		</span>
-	</div>
+		</div>
+			<hr style="margin-top:5px;margin-bottom:5px">
+			
+			
+			<!-- iterate replies -->
+			<span class="list-group-item" ng-repeat="reply in todosReplies | filter:{'parentID':todo.$id} : true " style="margin-left:50px" >
+				<!-- display replies -->
+				<h5 class="list-group-item-heading" ng-switch on="todo.headLastChar">
+					<span class="badge">{{reply.echo}}</span>
+					<span ng-class="{completed: todo.completed}">{{reply.head}}</span>
+				</h5>
+				<h5 class="list-group-item-text"><span ng-bind-html="reply.trustedDesc"></span> </h5>
+		    	<small style="margin-top:5px; color:#848484">
+					<em>created: {{ reply.dateString }}</em>
+				</small>
+			</span>
+		  
+			<!-- post a reply -->
+			<div class="input-group" style="margin-left:50px">
+				<textarea type="text" id="new-todo-reply" class="form-control" placeholder="Reply to this Question" ng-model="todo.wholeMsgReply">
+				</textarea>
+				<span class="input-group-btn">
+					<button class="btn btn-default" type="button" ng-click="replyTodo(todo)">Reply</button>
+				</span>
+			</div>
+	</span>
+</div>
 
 	<!--
 
